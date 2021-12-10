@@ -207,7 +207,8 @@ class PhabricatorPlugin(CorePluginMixin, IssuePlugin2):
                 response = api.maniphest.search(constraints={"query": query})
             elif field == "assignee":
                 response = api.user.search(constraints={"nameLike": query})
-
+            else:
+                raise
         except Exception as e:
             return self.handle_api_error(e)
 
@@ -239,7 +240,7 @@ class PhabricatorPlugin(CorePluginMixin, IssuePlugin2):
         try:
             results = api.maniphest.search(constraints={"phids": [form_data["issue_id"]]})
         except Exception as e:
-            self.raise_error(e)
+            raise self.raise_error(e)
 
         task = results["data"][0]
 
@@ -251,7 +252,7 @@ class PhabricatorPlugin(CorePluginMixin, IssuePlugin2):
                     transactions=[{"type": "comment", "value": comment}],
                 )
             except Exception as e:
-                self.raise_error(e)
+                raise self.raise_error(e)
 
         return {
             "id": task["id"],

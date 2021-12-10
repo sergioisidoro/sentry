@@ -150,7 +150,7 @@ class AsanaPlugin(CorePluginMixin, IssuePlugin2):
                 workspace=self.get_option("workspace", group.project), data=form_data
             )
         except Exception as e:
-            self.raise_error(e, identity=client.auth)
+            raise self.raise_error(e, identity=client.auth)
 
         return response["data"]["gid"]
 
@@ -159,14 +159,14 @@ class AsanaPlugin(CorePluginMixin, IssuePlugin2):
         try:
             issue = client.get_issue(issue_id=form_data["issue_id"])["data"]
         except Exception as e:
-            self.raise_error(e, identity=client.auth)
+            raise self.raise_error(e, identity=client.auth)
 
         comment = form_data.get("comment")
         if comment:
             try:
                 client.create_comment(issue["gid"], {"text": comment})
             except Exception as e:
-                self.raise_error(e, identity=client.auth)
+                raise self.raise_error(e, identity=client.auth)
 
         return {"title": issue["name"]}
 
@@ -196,7 +196,7 @@ class AsanaPlugin(CorePluginMixin, IssuePlugin2):
         try:
             client = self.get_client(user)
         except PluginIdentityRequired as e:
-            self.raise_error(e)
+            raise self.raise_error(e)
         try:
             workspaces = client.get_workspaces()
         except HTTPError as e:
@@ -236,12 +236,14 @@ class AsanaPlugin(CorePluginMixin, IssuePlugin2):
 
         client = self.get_client(request.user)
         workspace = self.get_option("workspace", group.project)
-        results = []
-        field_name = field
+
         if field == "issue_id":
             field_name = "task"
         elif field == "assignee":
             field_name = "user"
+        else:
+            field_name = field
+
         try:
             response = client.search(workspace, field_name, query.encode("utf-8"))
         except Exception as e:
@@ -249,10 +251,9 @@ class AsanaPlugin(CorePluginMixin, IssuePlugin2):
                 {"error_type": "validation", "errors": [{"__all__": self.message_from_error(e)}]},
                 status=400,
             )
-        else:
-            results = [
-                {"text": "(#{}) {}".format(i["gid"], i["name"]), "id": i["gid"]}
-                for i in response.get("data", [])
-            ]
 
+        results = [
+            {"text": "(#{}) {}".format(i["gid"], i["name"]), "id": i["gid"]}
+            for i in response.get("data", [])
+        ]
         return Response({field: results})
