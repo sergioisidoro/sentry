@@ -56,8 +56,8 @@ const Switch = ({
 type StyleProps = Partial<Props>;
 
 const getSize = (p: StyleProps) => (p.size === 'sm' ? 16 : 24);
-const getToggleSize = (p: StyleProps) => getSize(p) - (p.size === 'sm' ? 6 : 10);
-const getToggleTop = (p: StyleProps) => (p.size === 'sm' ? 2 : 4);
+const getToggleSize = (p: StyleProps) => getSize(p) - (p.size === 'sm' ? 4 : 8);
+const getToggleTop = (p: StyleProps) => (p.size === 'sm' ? 1 : 2);
 const getTranslateX = (p: StyleProps) =>
   p.isActive ? getToggleTop(p) + getSize(p) : getToggleTop(p);
 
@@ -65,9 +65,8 @@ const SwitchButton = styled('button')<StyleProps>`
   display: inline-block;
   background: none;
   padding: 0;
-  border: 1px solid ${p => p.theme.border};
+  border: 2px solid ${p => (p.isActive ? p.theme.purple200 : p.theme.border)};
   position: relative;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.04);
   transition: 0.15s border ease;
   cursor: ${p => (p.isLoading || p.isDisabled ? 'not-allowed' : 'pointer')};
   pointer-events: ${p => (p.isLoading || p.isDisabled ? 'none' : null)};
@@ -75,16 +74,37 @@ const SwitchButton = styled('button')<StyleProps>`
   width: ${p => getSize(p) * 2}px;
   border-radius: ${getSize}px;
 
-  &:hover,
   &:focus {
     outline: none;
-    border-color: ${p => p.theme.border};
+  }
+
+  &:hover {
+    border: 2px solid ${p => (p.isActive ? p.theme.purple200 : p.theme.subText)};
+  }
+
+  &.focus-visible {
+    box-shadow: 0 0 0 5px ${p => p.theme.purple100};
   }
 
   &:focus,
-  &.focus-visible {
-    outline: none;
-    box-shadow: rgba(209, 202, 216, 0.5) 0 0 0 3px;
+  &:active {
+    border: 2px solid ${p => p.theme.purple300};
+    box-shadow: 0 0 0 5px ${p => p.theme.purple100};
+  }
+
+  &::placeholder {
+    color: ${p => p.theme.formPlaceholder};
+  }
+
+  &[disabled] {
+    background: ${p => p.theme.backgroundSecondary};
+    color: ${p => p.theme.gray300};
+    border: 2px solid ${p => p.theme.border};
+    cursor: not-allowed;
+
+    &::placeholder {
+      color: ${p => p.theme.disabled};
+    }
   }
 `;
 

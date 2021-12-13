@@ -12,8 +12,8 @@ type CheckedProps = Props &
 
 const checkedCss = (p: CheckedProps) => css`
   display: block;
-  width: ${p.radioSize === 'small' ? '8px' : '1rem'};
-  height: ${p.radioSize === 'small' ? '8px' : '1rem'};
+  width: ${p.radioSize === 'small' ? '8px' : '0.875rem'};
+  height: ${p.radioSize === 'small' ? '8px' : '0.875rem'};
   border-radius: 50%;
   background-color: ${p.theme.active};
   animation: 0.2s ${growIn} ease;
@@ -23,25 +23,32 @@ const checkedCss = (p: CheckedProps) => css`
 const Radio = styled('input')<Props>`
   display: flex;
   padding: 0;
-  width: ${p => (p.radioSize === 'small' ? '16px' : '1.5em')};
-  height: ${p => (p.radioSize === 'small' ? '16px' : '1.5em')};
+  width: ${p => (p.radioSize === 'small' ? '16px' : '1.5rem')};
+  height: ${p => (p.radioSize === 'small' ? '16px' : '1.5rem')};
   position: relative;
   border-radius: 50%;
   align-items: center;
   justify-content: center;
-  border: 1px solid ${p => p.theme.border};
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.04);
+  border: 2px solid ${p => p.theme.border};
   background: none;
   appearance: none;
 
   /* TODO(bootstrap): Our bootstrap CSS adds this, we can remove when we remove that */
   margin: 0 !important;
 
+  &:hover {
+    border-color: ${p => p.theme.subText};
+  }
+
+  &:checked {
+    border-color: ${p => p.theme.purple200};
+  }
+
   &:focus,
   &.focus-visible {
     outline: none !important;
-    border: 1px solid ${p => p.theme.border};
-    box-shadow: rgba(209, 202, 216, 0.5) 0 0 0 3px;
+    border: 2px solid ${p => p.theme.purple300};
+    box-shadow: 0 0 0 5px ${p => p.theme.purple100};
   }
 
   &:checked:after {

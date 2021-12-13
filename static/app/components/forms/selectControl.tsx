@@ -11,12 +11,75 @@ import Async from 'react-select/async';
 import AsyncCreatable from 'react-select/async-creatable';
 import Creatable from 'react-select/creatable';
 import {useTheme} from '@emotion/react';
+import styled from '@emotion/styled';
 
 import LoadingIndicator from 'sentry/components/loadingIndicator';
-import {IconChevron, IconClose} from 'sentry/icons';
+import {IconChevron, IconClose, IconCheckmark} from 'sentry/icons';
 import space from 'sentry/styles/space';
 import {Choices, SelectValue} from 'sentry/types';
 import convertFromSelect2Choices from 'sentry/utils/convertFromSelect2Choices';
+
+const ModifiedOption = props => {
+  return (
+    <selectComponents.Option {...props}>
+      <OptionInnerWrap>
+        <OptionIndent>
+          <OptionCheckWrap isMulti={props.isMulti} isSelected={props.isSelected}>
+            {props.isSelected && (
+              <IconCheckmark
+                size={props.isMulti ? 'xs' : 'sm'}
+                color={props.isMulti ? 'white' : undefined}
+              />
+            )}
+          </OptionCheckWrap>
+        </OptionIndent>
+        {props.children}
+      </OptionInnerWrap>
+    </selectComponents.Option>
+  );
+};
+
+const OptionInnerWrap = styled('div')`
+  display: flex;
+  align-items: center;
+`;
+
+const OptionIndent = styled('div')`
+  width: 1rem;
+  margin-right: ${space(1)};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const OptionCheckWrap = styled('div')<{isMulti: boolean; isSelected: boolean}>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  ${p =>
+    p.isMulti
+      ? `
+      width: 1rem;
+      height: 1rem;
+      border: solid 1px ${p.theme.border};
+      border-radius: ${p.theme.borderRadius};
+      ${
+        p.isSelected &&
+        `
+        background: ${p.theme.purple300};
+        border-color: ${p.theme.purple300};
+       `
+      }
+    `
+      : `
+      width: 1.5rem;
+      height: 1.5rem;
+    `}
+`;
+
+const ModifiedMenu = props => {
+  return <selectComponents.Menu {...props} />;
+};
 
 function isGroupedOptions<OptionType>(
   maybe:
@@ -135,23 +198,28 @@ function SelectControl<OptionType extends GeneralSelectValue = GeneralSelectValu
         color: theme.formText,
         background: theme.background,
         border: `1px solid ${theme.border}`,
-        boxShadow: `inset ${theme.dropShadowLight}`,
       },
       borderRadius: theme.borderRadius,
       transition: 'border 0.1s linear',
       alignItems: 'center',
       minHeight: '40px',
+      boxShadow: theme.dropShadowLight,
       '&:hover': {
-        borderColor: theme.border,
+        borderColor: theme.subText,
       },
       ...(state.isFocused && {
-        border: `1px solid ${theme.border}`,
-        boxShadow: 'rgba(209, 202, 216, 0.5) 0 0 0 3px',
+        borderColor: theme.purple300,
+        '&:hover': {
+          borderColor: theme.purple300,
+        },
+        boxShadow: `0 0 0 1px ${theme.purple300}, 0 0 0 5px ${theme.purple100}`,
       }),
       ...(state.menuIsOpen && {
-        borderBottomLeftRadius: '0',
-        borderBottomRightRadius: '0',
-        boxShadow: 'none',
+        borderColor: theme.purple300,
+        '&:hover': {
+          borderColor: theme.purple300,
+        },
+        zIndex: theme.zIndex.dropdown + 1,
       }),
       ...(state.isDisabled && {
         borderColor: theme.border,
@@ -167,31 +235,28 @@ function SelectControl<OptionType extends GeneralSelectValue = GeneralSelectValu
     menu: (provided: React.CSSProperties) => ({
       ...provided,
       zIndex: theme.zIndex.dropdown,
-      marginTop: '-1px',
       background: theme.background,
       border: `1px solid ${theme.border}`,
-      borderRadius: `0 0 ${theme.borderRadius} ${theme.borderRadius}`,
-      borderTop: `1px solid ${theme.border}`,
-      boxShadow: theme.dropShadowLight,
+      borderRadius: `${theme.borderRadius}`,
+      boxShadow: theme.dropShadowHeavy,
+      transform: space(1),
+      padding: 0,
     }),
     option: (provided: React.CSSProperties, state: any) => ({
       ...provided,
       lineHeight: '1.5',
       fontSize: theme.fontSizeMedium,
       cursor: 'pointer',
-      color: state.isFocused
-        ? theme.textColor
-        : state.isSelected
-        ? theme.background
-        : theme.textColor,
-      backgroundColor: state.isFocused
-        ? theme.focus
-        : state.isSelected
-        ? theme.active
-        : 'transparent',
-      '&:active': {
-        backgroundColor: theme.active,
+      color: theme.textColor,
+      backgroundColor: theme.background,
+      ':hover': {
+        backgroundColor: theme.backgroundSecondary,
       },
+      ...(state.isFocused && {
+        '&:not(:hover)': {
+          backgroundColor: theme.backgroundSecondary,
+        },
+      }),
     }),
     valueContainer: (provided: React.CSSProperties) => ({
       ...provided,
@@ -341,6 +406,8 @@ function SelectControl<OptionType extends GeneralSelectValue = GeneralSelectValu
     MultiValueRemove,
     LoadingIndicator: SelectLoadingIndicator,
     IndicatorSeparator: null,
+    Option: ModifiedOption,
+    Menu: ModifiedMenu,
   };
 
   return (
@@ -356,6 +423,9 @@ function SelectControl<OptionType extends GeneralSelectValue = GeneralSelectValu
       isDisabled={props.isDisabled || props.disabled}
       options={options || (choicesOrOptions as OptionsType<OptionType>)}
       openMenuOnFocus={props.openMenuOnFocus === undefined ? true : props.openMenuOnFocus}
+      hideSelectedOptions={false}
+      tabSelectsValue={false}
+      closeMenuOnSelect={!(props.multiple || props.multi)}
       {...rest}
     />
   );

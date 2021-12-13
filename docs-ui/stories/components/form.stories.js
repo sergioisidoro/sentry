@@ -1,7 +1,6 @@
 import NewBooleanField from 'sentry/views/settings/components/forms/booleanField';
 import Form from 'sentry/views/settings/components/forms/form';
 import RadioField from 'sentry/views/settings/components/forms/radioField';
-import RangeField from 'sentry/views/settings/components/forms/rangeField';
 import SelectField from 'sentry/views/settings/components/forms/selectField';
 import TextField from 'sentry/views/settings/components/forms/textField';
 
@@ -42,22 +41,11 @@ export const Default = ({...fieldProps}) => {
         name="select"
         label="Select Field"
         choices={[
-          ['choice_one', 'Choice One'],
+          ['choice_one', 'Choice One Gazillion'],
           ['choice_two', 'Choice Two'],
           ['choice_three', 'Choice Three'],
         ]}
-        {...fieldProps}
-      />
-      <RangeField
-        name="rangeField"
-        label="Range Field"
-        min={1}
-        max={10}
-        step={1}
-        value={1}
-        formatLabel={value => {
-          return `${value} Toaster Strudle${value > 1 ? 's' : ''}`;
-        }}
+        placeholder="Placeholder"
         {...fieldProps}
       />
     </Form>

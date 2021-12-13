@@ -19,7 +19,7 @@ const inputStyles = (props: Props) =>
     background: ${props.theme.background};
     border: 1px solid ${props.theme.border};
     border-radius: ${props.theme.borderRadius};
-    box-shadow: inset ${props.theme.dropShadowLight};
+    box-shadow: ${props.theme.dropShadowInset};
     padding: ${INPUT_PADDING}px;
     transition: border 0.1s linear;
     resize: vertical;
@@ -37,10 +37,14 @@ const inputStyles = (props: Props) =>
       outline: none;
     }
 
-    &:hover,
+    &:hover {
+      border: 1px solid ${props.theme.subText};
+    }
+
     &:focus,
     &:active {
-      border: 1px solid ${props.theme.border};
+      border: 1px solid ${props.theme.purple300};
+      box-shadow: 0 0 0 1px ${props.theme.purple300};
     }
 
     &::placeholder {
@@ -59,7 +63,7 @@ const inputStyles = (props: Props) =>
     }
 
     &.focus-visible {
-      box-shadow: rgba(209, 202, 216, 0.5) 0 0 0 3px;
+      box-shadow: 0 0 0 1px ${props.theme.purple300}, 0 0 0 5px ${props.theme.purple100};
     }
   `;
 

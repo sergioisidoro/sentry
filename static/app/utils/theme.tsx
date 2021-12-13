@@ -104,12 +104,14 @@ export const darkColors = {
 };
 
 const lightShadows = {
+  dropShadowInset: 'inset 0 1px 2px rgba(43, 34, 51, 0.06)',
   dropShadowLightest: '0 0 2px rgba(43, 34, 51, 0.04)',
   dropShadowLight: '0 1px 4px rgba(43, 34, 51, 0.04)',
   dropShadowHeavy: '0 4px 24px rgba(43, 34, 51, 0.12)',
 };
 
 const darkShadows = {
+  dropShadowInset: 'inset 0 1px 2px rgba(10, 8, 12, 0.2)',
   dropShadowLightest: '0 0 2px rgba(10, 8, 12, 0.2)',
   dropShadowLight: '0 1px 4px rgba(10, 8, 12, 0.2)',
   dropShadowHeavy: '0 4px 24px rgba(10, 8, 12, 0.36)',
