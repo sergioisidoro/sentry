@@ -397,7 +397,10 @@ class SlackActionEndpoint(Endpoint):  # type: ignore
         action_list = [
             MessageAction(**action_data) for action_data in slack_request.data.get("actions", [])
         ]
-        action_option = action_list and action_list[0].value
+
+        action_option: str | None = None
+        if len(action_list):
+            action_option = action_list[0].value
 
         # If a user is just clicking our auto response in the messages tab we just return a 200
         if action_option == "sentry_docs_link_clicked":
