@@ -206,7 +206,7 @@ SENTRY_DIGESTS = "sentry.digests.backends.redis.RedisBackend"
 # CSRF_COOKIE_SECURE = True
 
 SENTRY_WEB_HOST = "0.0.0.0"
-SENTRY_WEB_PORT = 9000
+SENTRY_WEB_PORT = int(env("SENTRY_WEB_PORT") or 9000)
 SENTRY_WEB_OPTIONS = {
     # 'workers': 1,  # the number of web workers
 }
